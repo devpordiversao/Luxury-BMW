@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMW Digital Concept</title>
+<style>
+*{
+  margin:0; padding:0; box-sizing:border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+body{
+  background:#000;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  overflow-x:hidden;
+}.logo{ width:180px; display:block; margin:30px auto 10px; }
+
+.top-nav{ display:flex; justify-content:center; gap:40px; margin:20px 0 40px; } .top-nav a{ color:#777; text-decoration:none; font-size:18px; } .top-nav a.active, .top-nav a:hover{color:#fff;}
+
+.gallery{ columns:3 300px; column-gap:20px; padding:0 30px 60px; }
+
+.card{ break-inside:avoid; margin-bottom:20px; cursor:pointer; position:relative; } .card img{ width:100%; min-height:300px; max-height:420px; object-fit:cover; border-radius:16px; transition:transform .4s ease; } .card:hover img{transform:scale(1.05);}
+
+/* CINEMA */ .cinema{ position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(14px); display:none; align-items:center; justify-content:center; z-index:1000; } .cinema img{ max-width:90vw; max-height:90vh; border-radius:20px; animation:zoom .4s ease; } @keyframes zoom{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+/* FOCUS MODE */ .focus .card{filter:blur(6px) brightness(.6);} .focus .card.active{filter:none;z-index:2;}
+
+/* CURSOR TRAIL */ .cursor-dot{ position:fixed; width:8px;height:8px; border-radius:50%; background:rgba(0,150,255,.8); pointer-events:none; filter:blur(1px); z-index:2000; }
+
+/* UI */ .sound-toggle{ position:fixed; bottom:20px; right:20px; font-size:14px; color:#aaa; cursor:pointer; z-index:1500; } .sound-toggle.active{color:#fff;}
+
+.showcase-indicator{ position:fixed; bottom:20px; left:20px; font-size:13px; color:#777; cursor:pointer; z-index:1500; }
+
+/* FOOTER */ .footer{ position:relative; padding:40px 20px 60px; text-align:center; color:#aaa; font-size:14px; border-top:1px solid #111; overflow:hidden; } .footer span{position:relative;z-index:2;}
+
+/* MINI LIGHTNING SPARKS */ .sparks{ position:absolute; inset:0; pointer-events:none; } .sparks span{ position:absolute; bottom:15px; left:50%; width:2px; height:18px; background:linear-gradient(to top,#00aaff,rgba(0,170,255,0)); transform-origin:bottom; animation:bolt 2.5s infinite ease-out; filter:drop-shadow(0 0 6px #00aaff); } .sparks span:nth-child(1){left:48%;animation-delay:0s;} .sparks span:nth-child(2){left:52%;animation-delay:.6s;} .sparks span:nth-child(3){left:56%;animation-delay:1.2s;}
+
+@keyframes bolt{ 0%{transform:scaleY(0) skewX(0deg);opacity:0} 20%{opacity:1} 50%{transform:scaleY(1) skewX(-8deg)} 100%{transform:scaleY(0) skewX(6deg);opacity:0} } 20%{opacity:1} 100%{transform:translateY(-60px) scale(0);opacity:0} } </style>
+
+</head>
+<body><img src="https://i.imgur.com/BFtgc2V.jpeg" class="logo"><nav class="top-nav">
+  <a href="#" id="tabCars" class="active">Carros</a>
+  <a href="#" id="tabBikes">Motos</a>
+</nav><section class="gallery" id="gallery"></section><div class="cinema" id="cinema"><img></div><script>
+// IMAGENS
+const cars=[
+"https://i.imgur.com/eMVEljC.jpeg","https://i.imgur.com/fvPKqmy.jpeg","https://i.imgur.com/eWjd7Ai.jpeg","https://i.imgur.com/vWtYQsY.jpeg","https://i.imgur.com/KJq4Fp8.jpeg","https://i.imgur.com/qoNHiUM.jpeg","https://i.imgur.com/AnCVSn0.jpeg","https://i.imgur.com/4XdAq3k.jpeg","https://i.imgur.com/Vjhmet5.jpeg","https://i.imgur.com/7hpDv1F.jpeg","https://i.imgur.com/t2Igp6y.jpeg","https://i.imgur.com/m6trtL6.jpeg","https://i.imgur.com/siftbjX.jpeg","https://i.imgur.com/L9vkS0k.jpeg","https://i.imgur.com/XHEiPfD.jpeg","https://i.imgur.com/Lz2EwFI.jpeg","https://i.imgur.com/z36HJYJ.jpeg","https://i.imgur.com/GdFJhKl.jpeg","https://i.imgur.com/E23pqmT.jpeg","https://i.imgur.com/6yr33qG.jpeg","https://i.imgur.com/3ERrY1v.jpeg","https://i.imgur.com/TftCXp6.jpeg","https://i.imgur.com/l8HucWl.jpeg","https://i.imgur.com/MPIiXKX.jpeg","https://i.imgur.com/wrrS4PN.jpeg","https://i.imgur.com/SmIcBns.jpeg","https://i.imgur.com/00prNEN.jpeg","https://i.imgur.com/mJP0GzV.jpeg","https://i.imgur.com/6HzUJ2U.jpeg","https://i.imgur.com/96gQhwF.jpeg","https://i.imgur.com/NruhNBs.jpeg","https://i.imgur.com/JORcsjw.jpeg","https://i.imgur.com/0PxAvZv.jpeg","https://i.imgur.com/PEmP4eG.jpeg","https://i.imgur.com/a1S33Qw.jpeg","https://i.imgur.com/zkYAS69.jpeg","https://i.imgur.com/snq3fXm.jpeg","https://i.imgur.com/61sB7fH.jpeg","https://i.imgur.com/LS1QZ4d.jpeg","https://i.imgur.com/DnkPS6Z.jpeg","https://i.imgur.com/ldG4F2b.jpeg","https://i.imgur.com/WpSgbXn.jpeg","https://i.imgur.com/5Fc65lF.jpeg","https://i.imgur.com/q9zCoUx.jpeg"
+];
+
+const bikes=[
+"https://i.imgur.com/nCPamw9.jpeg","https://i.imgur.com/tZAumRu.jpeg","https://i.imgur.com/7wSFN0C.jpeg","https://i.imgur.com/EjvE5EU.jpeg","https://i.imgur.com/BiWTuBe.jpeg","https://i.imgur.com/YSSkCXC.jpeg","https://i.imgur.com/raPrLKl.jpeg","https://i.imgur.com/FEZCsV7.jpeg","https://i.imgur.com/PsGuK5u.jpeg","https://i.imgur.com/JIlAEmJ.jpeg","https://i.imgur.com/rew80yj.jpeg","https://i.imgur.com/qLs5Bnj.jpeg","https://i.imgur.com/CkgJyPx.jpeg","https://i.imgur.com/tBhJ7Dv.jpeg","https://i.imgur.com/ftnPpe7.jpeg","https://i.imgur.com/NB60mqq.jpeg","https://i.imgur.com/dP4mHjQ.jpeg","https://i.imgur.com/MxcwGfk.jpeg","https://i.imgur.com/Zl5tEcC.jpeg","https://i.imgur.com/LscDggo.jpeg","https://i.imgur.com/Uq2dwuH.jpeg"
+];
+
+// GALERIA
+const gallery=document.getElementById('gallery');
+const cinema=document.getElementById('cinema');
+const cinemaImg=cinema.querySelector('img');
+
+function render(list){
+  gallery.innerHTML='';
+  window.scrollTo(0,0);
+  list.forEach(src=>{
+    const card=document.createElement('div');
+    card.className='card';
+    const img=document.createElement('img');
+    img.src=src;
+    card.appendChild(img);
+    card.onclick=()=>{
+      document.body.classList.add('focus');
+      document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+      card.classList.add('active');
+      cinemaImg.src=src;
+      cinema.style.display='flex';
+    };
+    gallery.appendChild(card);
+  });
+}
+
+cinema.onclick=()=>{
+  cinema.style.display='none';
+  document.body.classList.remove('focus');
+};
+
+// NAV
+const tabCars=document.getElementById('tabCars');
+const tabBikes=document.getElementById('tabBikes');
+
+tabCars.onclick=e=>{e.preventDefault();tabCars.classList.add('active');tabBikes.classList.remove('active');render(cars);};
+tabBikes.onclick=e=>{e.preventDefault();tabBikes.classList.add('active');tabCars.classList.remove('active');render(bikes);};
+
+render(cars);
+
+// CURSOR TRAIL (DESKTOP)
+if(window.matchMedia('(pointer:fine)').matches){
+  const dots=[];
+  for(let i=0;i<12;i++){
+    const d=document.createElement('div');
+    d.className='cursor-dot';
+    d.style.opacity=1-i*0.07;
+    document.body.appendChild(d);
+    dots.push({el:d,x:0,y:0});
+  }
+  let mx=0,my=0;
+  window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function anim(){
+    let x=mx,y=my;
+    dots.forEach(d=>{
+      d.x+=(x-d.x)*.25;
+      d.y+=(y-d.y)*.25;
+      d.el.style.transform=`translate(${d.x}px,${d.y}px)`;
+      x=d.x;y=d.y;
+    });
+    requestAnimationFrame(anim);
+  })();
+}
+</script><footer class="footer">
+  <span>Viva o momento com BMW • Feito por aeth</span>
+  <div class="sparks"><span></span><span></span><span></span></div>
+</footer></body>
+</html>
